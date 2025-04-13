@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>呱呱船长瑞典糖果</title>
+    <style>
+        /* CSS 样式 - 粉色少女风主题 */
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            /* 主背景色 - 淡粉色 */
+            background-color: #fff0f5; /* LavenderBlush */
+        }
+
+        h1 {
+            text-align: center;
+            /* 标题颜色 - 稍深的粉色 */
+            color: #c71585; /* MediumVioletRed */
+        }
+
+        /* 产品网格布局 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5列 */
+            gap: 25px; /* 网格间距 */
+            max-width: 1200px; /* 限制最大宽度 */
+            margin: 20px auto; /* 居中显示 */
+            padding: 20px; /* 增加一点内边距 */
+            background-color: #ffffff; /* 网格区域背景色 - 保持白色以突出产品 */
+            border-radius: 12px; /* 更圆润的边角 */
+            box-shadow: 0 4px 15px rgba(212, 175, 212, 0.4); /* 粉色调阴影 */
+        }
+
+        /* 单个产品项 */
+        .product-item {
+            border: 1px solid #fbcce7; /* 浅粉色边框 */
+            padding: 15px;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px; /* 圆角 */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative; /* 为了细节图定位 和 z-index */
+            /* z-index: 1; 默认层级 */
+            display: flex; /* 使用 Flexbox 布局 */
+            flex-direction: column; /* 垂直排列内容 */
+            justify-content: space-between; /* 让内容撑满，按钮在底部 */
+        }
+        .product-item:hover {
+            transform: translateY(-5px); /* 轻微上移 */
+            box-shadow: 0 6px 12px rgba(199, 21, 133, 0.2); /* 悬停时更明显的粉色阴影 */
+            /* --- 修改点：提升悬停项的层级 --- */
+            z-index: 50; /* 确保悬停的整个卡片在最前面 */
+        }
+
+        /* 图片容器 */
+        .image-container {
+            position: relative; /* 细节图定位的参照 */
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* 主图 */
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #eee; /* 给主图加个细边框 */
+        }
+
+        /* 细节图 (默认隐藏) */
+        .detail-image {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 105%; /* 依然显示在右侧 */
+            /* --- 修改点：放大细节图 --- */
+            width: 280px; /* 增大宽度 */
+            max-width: 350px; /* 增大最大宽度 */
+            height: auto;
+            border: 3px solid #ffb6c1; /* LightPink 边框 */
+            background-color: white;
+            padding: 8px; /* 增加一点内边距 */
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); /* 更明显的阴影 */
+            /* --- 修改点：提升细节图自身层级 --- */
+            z-index: 100; /* 比悬停卡片的 z-index 更高，确保在卡片内容之上，同时也高于其他未悬停卡片 */
+            border-radius: 6px;
+        }
+
+        /* 鼠标悬停在图片容器上时显示细节图 */
+        .image-container:hover .detail-image {
+            display: block;
+        }
+
+        /* 产品描述 */
+        .description {
+            font-size: 0.9em;
+            color: #555; /* 描述文字颜色稍深一点 */
+            /* min-height: 4.5em; 增加最小高度，尝试对齐 */
+            margin-top: 10px;
+            margin-bottom: 15px;
+            flex-grow: 1; /* 让描述区域在Flexbox中尽可能伸展 */
+            line-height: 1.4; /* 调整行高 */
+        }
+
+        /* 数量控制 */
+        .quantity-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: auto; /* 将其推到底部 */
+        }
+
+        .quantity-controls button {
+            /* --- 修改点：按钮样式 --- */
+            background-color: #ffb6c1; /* LightPink 背景 */
+            border: 1px solid #ffa8b8; /* 稍深一点的边框 */
+            color: #fff; /* 白色文字 */
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 5px 12px; /* 稍微调整按钮大小 */
+            border-radius: 5px; /* 圆角 */
+            margin: 0 5px;
+            user-select: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            flex-shrink: 0; /* 防止按钮被压缩 */
+        }
+        .quantity-controls button:hover {
+            background-color: #ff9aac; /* 悬停时深一点 */
+        }
+        .quantity-controls button:active {
+            background-color: #ff8fa0; /* 点击时再深一点 */
+            transform: scale(0.95); /* 点击反馈 */
+        }
+
+
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #fbcce7; /* 浅粉色边框 */
+            padding: 5px;
+            font-size: 1em;
+            border-radius: 4px; /* 圆角 */
+            -moz-appearance: textfield;
+            flex-shrink: 0; /* 防止输入框被压缩 */
+        }
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+
+        /* 总重量显示 */
+        #total-weight-section {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 15px;
+            /* --- 修改点：总重量区域背景 --- */
+            background-color: #ffe4e1; /* MistyRose 背景 */
+            border: 1px solid #ffc0cb; /* Pink 边框 */
+            color: #a0522d; /* Sienna 文字颜色，与粉色搭配 */
+            border-radius: 8px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #total-weight {
+            /* 重量数字颜色 - 保持醒目 */
+            color: #dc143c; /* Crimson */
+            font-size: 1.1em; /* 稍微放大一点 */
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) { /* 当屏幕宽度不足以放下5列+细节图时 */
+             .detail-image {
+                /* 尝试让它在右侧空间不足时往左偏移一点 */
+                left: auto;
+                right: 105%;
+             }
+             /* 如果右侧的图片悬停，细节图还是优先放右边 */
+             .product-item:nth-child(5n) .detail-image, /* 每行最后一个 */
+             .product-item:nth-child(4n) .detail-image /* 4列时的最后一个 */
+              {
+                 left: auto;
+                 right: 105%; /* 在右侧空间不足时，强制放左边 */
+             }
+             .product-item:nth-child(5n-1) .detail-image, /* 每行倒数第二个 */
+             .product-item:nth-child(4n-1) .detail-image
+              {
+                /* 也可以考虑放左边 */
+                /* left: auto; right: 105%; */
+             }
+             /* 回到默认，优先放右边 */
+             .image-container:hover .detail-image {
+                  left: 105%;
+                  right: auto;
+             }
+            /* 对于最右侧的元素，强制细节图在左侧弹出 */
+             .product-item:nth-child(5n):hover .detail-image,
+             .product-item:nth-child(4n):hover .detail-image,
+             .product-item:nth-child(3n):hover .detail-image,
+             .product-item:nth-child(2n):hover .detail-image {
+                 left: auto;
+                 right: 105%;
+             }
+        }
+
+
+        @media (max-width: 1000px) {
+            .product-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            /* 小屏幕上，细节图可能需要置于下方避免遮挡 */
+             .detail-image {
+                 /* left: 50%;
+                 transform: translateX(-50%);
+                 top: 105%; */ /* 移动到下方 */
+            }
+             .image-container:hover .detail-image {
+                 /* 保持在右侧或左侧（根据上方规则）*/
+                 /* top: 0; transform: none; */
+             }
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+         @media (max-width: 550px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+                 gap: 15px;
+            }
+             .product-item {
+                 padding: 10px;
+             }
+             .detail-image {
+                 width: 200px; /* 在更小屏幕上，细节图也缩小一点 */
+                 max-width: 250px;
+             }
+             /* 在双列和单列时，强制放下方可能更好 */
+             .detail-image {
+                 left: 50%;
+                 transform: translateX(-50%);
+                 top: 105%;
+                 right: auto; /* 重置左右定位 */
+             }
+              .image-container:hover .detail-image {
+                 left: 50%;
+                 right: auto;
+                 top: 105%;
+                 transform: translateX(-50%);
+              }
+        }
+         @media (max-width: 400px) {
+            .product-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+             /* 单列时，细节图肯定放下方 */
+            .detail-image {
+                 left: 50%;
+                 transform: translateX(-50%);
+                 top: 105%;
+                 right: auto;
+             }
+             .image-container:hover .detail-image {
+                 left: 50%;
+                 right: auto;
+                 top: 105%;
+                 transform: translateX(-50%);
+             }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>呱呱船长瑞典糖果</h1>
+
+    <div class="product-grid" id="product-grid">
+        <!-- 产品 1 -->
+        <div class="product-item" data-product-id="1">
+            <div> <!-- 添加一个容器包裹图片和描述 -->
+                <div class="image-container">
+                    <img src="IMG_1533.jpg" alt="瑞典糖果 1" class="product-image">
+                    <img src="IMG_1559.jfif" alt="瑞典糖果 1 细节" class="detail-image">
+                </div>
+                <p class="description">#1 缤纷小花瓣：外层微韧，内芯Q弹如果冻，一口品尝多种水果惊喜，色彩与美味并存！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="1" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 2 -->
+        <div class="product-item" data-product-id="2">
+            <div>
+                <div class="image-container">
+                    <img src="IMG_1534.jfif" alt="瑞典糖果 2" class="product-image">
+                    <img src="IMG_1560.jfif" alt="瑞典糖果 2 细节" class="detail-image">
+                </div>
+                <p class="description">#2 心动小红心：上层云朵般软糯，下层微带嚼劲，甜度恰好不腻，层次分明，口感丰富得让人着迷。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="2" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 3 -->
+        <div class="product-item" data-product-id="3">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1535.jfif" alt="瑞典糖果 3" class="product-image">
+                    <img src="IMG_1561.jfif" alt="瑞典糖果 3 细节" class="detail-image">
+                </div>
+                <p class="description">#3 草莓甜心：浓郁纯正的草莓香气，融合温柔奶白底，口感绵密软糯，是初恋般的美好滋味。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="3" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 4 -->
+        <div class="product-item" data-product-id="4">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1536.jfif" alt="瑞典糖果 4" class="product-image">
+                    <img src="IMG_1562.jpg" alt="瑞典糖果 4 细节" class="detail-image">
+                </div>
+                <p class="description">#4 时光机绿条纹：就是那个魂牵梦绕的童年味道！经典泡泡糖重现，嚼出满满的快乐回忆！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="4" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 5 -->
+        <div class="product-item" data-product-id="5">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1537.jfif" alt="瑞典糖果 5" class="product-image">
+                    <img src="IMG_1563.jpg" alt="瑞典糖果 5 细节" class="detail-image">
+                </div>
+                <p class="description">#5 迷你棒球泡泡糖：别看它小，嚼劲十足！越嚼越带感，乐趣无穷，挑战你的腮帮子！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="5" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 6 -->
+        <div class="product-item" data-product-id="6">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1538.jfif" alt="瑞典糖果 6" class="product-image">
+                    <img src="IMG_1564.jpg" alt="瑞典糖果 6 细节" class="detail-image">
+                </div>
+                <p class="description">#6 酷炫台球泡泡糖：让人想起经典的“比巴卜”！超有嚼头，趣味满分，仿佛回到无忧无虑的年代。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="6" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 7 -->
+        <div class="product-item" data-product-id="7">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1539.jfif" alt="瑞典糖果 7" class="product-image">
+                    <img src="IMG_1565.jpg" alt="瑞典糖果 7 细节" class="detail-image">
+                </div>
+                <p class="description">#7 温柔粉草莓：触感软糯得不可思议，入口即是纯正香甜的草莓味，好吃到心都融化了！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="7" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 8 -->
+        <div class="product-item" data-product-id="8">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1540.jfif" alt="瑞典糖果 8" class="product-image">
+                    <img src="IMG_1566.jpg" alt="瑞典糖果 8 细节" class="detail-image">
+                </div>
+                <p class="description">#8 粉嫩水蜜桃：软糯口感包裹着清新的桃子芬芳，仿佛咬下一口盛夏多汁的甜蜜。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="8" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 9 -->
+        <div class="product-item" data-product-id="9">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1541.jpg" alt="瑞典糖果 9" class="product-image">
+                    <img src="IMG_1567.jpg" alt="瑞典糖果 9 细节" class="detail-image">
+                </div>
+                <p class="description">#9 硬核水蜜桃：微硬的质地带来独特的嚼感，释放出恰到好处的酸甜桃香，越嚼越有滋味。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="9" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 10 -->
+        <div class="product-item" data-product-id="10">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1542.jpg" alt="瑞典糖果 10" class="product-image">
+                    <img src="IMG_1568.jpg" alt="瑞典糖果 10 细节" class="detail-image">
+                </div>
+                <p class="description">#10 高能粉蓝瓶：警告！极致酸爽直冲味蕾，让你口水直流，瞬间清醒！酸得过瘾，越吃越上头！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="10" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 11 -->
+        <div class="product-item" data-product-id="11">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1543.jpg" alt="瑞典糖果 11" class="product-image">
+                    <img src="IMG_1569.jpg" alt="瑞典糖果 11 细节" class="detail-image">
+                </div>
+                <p class="description">#11 惊喜爆浆球：轻轻咬开纯白外衣，感受微带可乐风味的浆心瞬间迸发！口感层次丰富又有趣。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="11" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 12 -->
+        <div class="product-item" data-product-id="12">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1544.jpg" alt="瑞典糖果 12" class="product-image">
+                    <img src="IMG_1570.jpg" alt="瑞典糖果 12 细节" class="detail-image">
+                </div>
+                <p class="description">#12 经典可乐瓶：纯正的可乐风味软糖，软韧适中，甜度不高，完美还原喝可乐的酷爽感觉！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="12" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 13 -->
+        <div class="product-item" data-product-id="13">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1545.jpg" alt="瑞典糖果 13" class="product-image">
+                    <img src="IMG_1571.jpg" alt="瑞典糖果 13 细节" class="detail-image">
+                </div>
+                <p class="description">#13 清爽西瓜瓣：微硬质地带来清脆嚼感，酸甜交织，仿佛口中刮过一阵夏日凉风，爽口怡人。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="13" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 14 -->
+        <div class="product-item" data-product-id="14">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1546.jpg" alt="瑞典糖果 14" class="product-image">
+                    <img src="IMG_1572.jpg" alt="瑞典糖果 14 细节" class="detail-image">
+                </div>
+                <p class="description">#14 活力黄瓶子：准备好迎接挑战！先是强劲的酸味冲击，随后温柔甜意涌现，体验先酸后甜的奇妙反转！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="14" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 15 -->
+        <div class="product-item" data-product-id="15">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1547.jpg" alt="瑞典糖果 15" class="product-image">
+                    <img src="IMG_1573.jpg" alt="瑞典糖果 15 细节" class="detail-image">
+                </div>
+                <p class="description">#15 多彩撞色条：红绿蓝三味一体，偏硬的糖体带来持久的酸爽体验，多种果味在口中激情碰撞融合。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="15" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 16 -->
+        <div class="product-item" data-product-id="16">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1548.jpg" alt="瑞典糖果 16" class="product-image">
+                    <img src="IMG_1574.jpg" alt="瑞典糖果 16 细节" class="detail-image">
+                </div>
+                <p class="description">#16 活力绿圈圈：口感Q弹得让你忍不住一直嚼！酸甜平衡得刚刚好，每一口都是满满的活力和乐趣。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="16" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 17 -->
+        <div class="product-item" data-product-id="17">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1549.jpg" alt="瑞典糖果 17" class="product-image">
+                    <img src="IMG_1575.jpg" alt="瑞典糖果 17 细节" class="detail-image">
+                </div>
+                <p class="description">#17 阳光大芒果：个头饱满实在，甜度适中不腻口，纯正的热带芒果风情在口中弥漫开来。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="17" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 18 -->
+        <div class="product-item" data-product-id="18">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1550.jpg" alt="瑞典糖果 18" class="product-image">
+                    <img src="IMG_1576.jpg" alt="瑞典糖果 18 细节" class="detail-image">
+                </div>
+                <p class="description">#18 安抚奶嘴糖：可爱的造型萌化人心！草莓口味，拥有云朵般绵绵的温柔口感，带来治愈系的甜蜜。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="18" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 19 -->
+        <div class="product-item" data-product-id="19">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1551.jpg" alt="瑞典糖果 19" class="product-image">
+                    <img src="IMG_1577.jpg" alt="瑞典糖果 19 细节" class="detail-image">
+                </div>
+                <p class="description">#19 爱心发射Q糖：大大的红心，口感Q弹有嚼劲，香甜却不腻人，每一颗都充满了幸福感！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="19" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 20 -->
+        <div class="product-item" data-product-id="20">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1552.jpg" alt="瑞典糖果 20" class="product-image">
+                    <img src="IMG_1578.jpg" alt="瑞典糖果 20 细节" class="detail-image">
+                </div>
+                <p class="description">#20 热带菠萝风情：可爱的菠萝造型惟妙惟肖，带来阳光般灿烂的菠萝酸甜滋味，仿佛瞬间置身热带海岛！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="20" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 21 -->
+        <div class="product-item" data-product-id="21">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1553.jpg" alt="瑞典糖果 21" class="product-image">
+                    <img src="IMG_1579.jpg" alt="瑞典糖果 21 细节" class="detail-image">
+                </div>
+                <p class="description">#21 硬核百香果：扎实的偏硬口感，在咀嚼中缓缓释放浓郁独特的百香果酸甜香气，风味十足，个性鲜明。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="21" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 22 -->
+        <div class="product-item" data-product-id="22">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1554.jpg" alt="瑞典糖果 22" class="product-image">
+                    <img src="IMG_1580.jpg" alt="瑞典糖果 22 细节" class="detail-image">
+                </div>
+                <p class="description">#22 硬糖也温柔：这款偏硬质地的草莓糖，口感清脆，却饱含着浓浓的草莓香甜，带来别样的味觉体验。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="22" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 23 -->
+        <div class="product-item" data-product-id="23">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1555.jpg" alt="瑞典糖果 23" class="product-image">
+                    <img src="IMG_1581.jpg" alt="瑞典糖果 23 细节" class="detail-image">
+                </div>
+                <p class="description">#23 多彩酸味圈：每一口都是不同的果味惊喜，以清爽的酸味为主调，像味蕾的小精灵，瞬间提神醒脑！</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="23" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 24 -->
+        <div class="product-item" data-product-id="24">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1556.jpg" alt="瑞典糖果 24" class="product-image">
+                    <img src="IMG_1582.jpg" alt="瑞典糖果 24 细节" class="detail-image">
+                </div>
+                <p class="description">#24 经典瑞典风味：绿蓝双色硬糖，体验地道瑞典糖果的代表性偏酸口感，硬朗嚼劲，回味悠长。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="24" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品 25 -->
+        <div class="product-item" data-product-id="25">
+             <div>
+                <div class="image-container">
+                    <img src="IMG_1557.jpg" alt="瑞典糖果 25" class="product-image">
+                    <img src="IMG_1583.jpg" alt="瑞典糖果 25 细节" class="detail-image">
+                </div>
+                <p class="description">#25 迷你菠萝炸弹：外层糖霜带来瞬间甜意，随后菠萝特有的清新酸爽在口中爆开！层次丰富，小巧迷人。</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-minus" aria-label="减少数量">-</button>
+                <input type="number" class="quantity-input" value="0" min="0" data-product-id="25" readonly>
+                <button class="quantity-plus" aria-label="增加数量">+</button>
+            </div>
+        </div>
+        <!-- 产品项结束 -->
+    </div>
+
+    <div id="total-weight-section">
+        您选择的糖果总重量大约为： <span id="total-weight">0</span> g
+    </div>
+
+    <script>
+        // JavaScript 功能 (这部分无需修改)
+        document.addEventListener('DOMContentLoaded', function() {
+            const productWeights = {
+                1: 6,  2: 3,  3: 7,  4: 5,  5: 5,
+                6: 10, 7: 6,  8: 9,  9: 9, 10: 7,
+                11: 7, 12: 8, 13: 7, 14: 7, 15: 7,
+                16: 9, 17: 13, 18: 3, 19: 11, 20: 14,
+                21: 7, 22: 6, 23: 4, 24: 8, 25: 11
+            };
+
+            const grid = document.getElementById('product-grid');
+            const totalWeightSpan = document.getElementById('total-weight');
+
+            function updateTotalWeight() {
+                let currentTotalWeight = 0;
+                const quantityInputs = grid.querySelectorAll('.quantity-input');
+
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value, 10);
+                    if (quantity > 0) {
+                        const productId = parseInt(input.dataset.productId, 10);
+                        // 添加检查，确保 productId 存在于 weights 中
+                        if (productWeights[productId] !== undefined) {
+                            currentTotalWeight += quantity * productWeights[productId];
+                        } else {
+                            console.warn(`Product weight for ID ${productId} not found.`);
+                        }
+                    }
+                });
+
+                totalWeightSpan.textContent = currentTotalWeight;
+            }
+
+            grid.addEventListener('click', function(event) {
+                const target = event.target;
+                const productItem = target.closest('.product-item');
+                if (!productItem) return;
+
+                const productId = productItem.dataset.productId; // productId is a string here
+                const input = productItem.querySelector('.quantity-input');
+                let currentValue = parseInt(input.value, 10);
+
+                if (target.classList.contains('quantity-plus')) {
+                    currentValue++;
+                    input.value = currentValue;
+                    updateTotalWeight();
+                } else if (target.classList.contains('quantity-minus')) {
+                    if (currentValue > 0) {
+                        currentValue--;
+                        input.value = currentValue;
+                        updateTotalWeight();
+                    }
+                }
+            });
+
+             // --- 响应式细节图定位 (JS辅助 - 保持纯CSS方案，注释掉JS部分) ---
+             // const productItems = grid.querySelectorAll('.product-item');
+             // productItems.forEach(item => {
+             //     const imgContainer = item.querySelector('.image-container');
+             //     if (!imgContainer) return;
+             //     imgContainer.addEventListener('mouseenter', () => {
+             //         const detailImg = item.querySelector('.detail-image');
+             //         if (!detailImg) return;
+             //
+             //         const itemRect = item.getBoundingClientRect();
+             //         const gridRect = grid.getBoundingClientRect();
+             //         const spaceRight = window.innerWidth - itemRect.right;
+             //         const spaceLeft = itemRect.left;
+             //         const detailWidth = detailImg.offsetWidth || 280; // Estimate width if needed
+             //
+             //         // Reset styles
+             //         detailImg.style.left = '';
+             //         detailImg.style.right = '';
+             //         detailImg.style.top = '';
+             //         detailImg.style.transform = '';
+             //
+             //         // Check screen size for small screens (match CSS breakpoints)
+             //         if (window.innerWidth <= 550) {
+             //             detailImg.style.left = '50%';
+             //             detailImg.style.top = '105%';
+             //             detailImg.style.transform = 'translateX(-50%)';
+             //             console.log('Small screen, placing below');
+             //         } else if (spaceRight < detailWidth + 30 && spaceLeft > detailWidth + 30) {
+             //             // Not enough space on the right, enough on the left
+             //             detailImg.style.right = '105%';
+             //             detailImg.style.top = '0';
+             //             console.log('Placing left');
+             //
+             //         } else {
+             //             // Default to right or if space on left is also tight
+             //             detailImg.style.left = '105%';
+             //             detailImg.style.top = '0';
+             //             console.log('Placing right (default)');
+             //         }
+             //     });
+             // });
+
+            updateTotalWeight();
+        });
+    </script>
+
+</body>
+</html>
